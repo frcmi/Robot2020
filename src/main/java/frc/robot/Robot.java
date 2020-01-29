@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import java.io.PrintStream;
+import frc.robot.lib.jetsoninterface.VisionPoller;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,6 +20,7 @@ import java.io.PrintStream;
  */
 public class Robot extends TimedRobot {
     public static PrintStream debugStream;
+    public static VisionPoller poller;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -27,6 +29,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         debugStream = System.out;
+        poller = new VisionPoller();
     }
 
     /**
