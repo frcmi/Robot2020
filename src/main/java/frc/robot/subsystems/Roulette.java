@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+
 /**
  * Add your docs here.
  */
@@ -31,20 +32,18 @@ public class Roulette extends Subsystem {
 
   }
 
-  public void cycle() {
+  public void cycle(int[] arr) {
     //makes sure that ballLocation[0] is full
     //makes sure that ballLocation[2] is empty
     //optimizes shooting
-    if (ballLocation[0] == 0 && isEmpty == false) {
 
-    }    
-  
   }
 
   public void update() {
     //checks color sensors and updates ballLocation accordingly
     //keeps track of ball position
-    requires(ultrasonicSensor);
+    //might scrap because no sensors
+    /**requires(ultrasonicSensor);
     if (ultrasonicSensor1.read() < 5) {
       ballLocation[0] = 1;
     } else {
@@ -71,6 +70,7 @@ public class Roulette extends Subsystem {
       ballLocation[4] = 0;
     }
     cycle();
+    **/
   }
 
   public void addBall() {
