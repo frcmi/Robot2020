@@ -57,6 +57,14 @@ dependencies {
     // Enable simulation gui support. Must check the box in vscode to enable support
     // upon debugging
     simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
+
+    compile 'javax.json:javax.json-api:1.0'
+    compile 'javax.json.bind:javax.json.bind-api:1.0'
+    compile 'javax.ws.rs:javax.ws.rs-api:2.0'
+    compile 'org.glassfish.jersey.core:jersey-client:2.0-m04'
+    compile 'org.jboss.resteasy:resteasy-client:3.1.0.Final'
+    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.1.0.Final'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.8'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
