@@ -7,9 +7,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import java.io.PrintStream;
-import frc.robot.lib.jetsoninterface.VisionPoller;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,16 +23,20 @@ import frc.robot.lib.jetsoninterface.VisionPoller;
  */
 public class Robot extends TimedRobot {
     public static PrintStream debugStream;
-    public static VisionPoller poller;
-
+    public static DriveTrain driveTrain;
+    public static Joystick left;
+    public static Joystick right;
     /**
      * This function is run when the robot is first started up and should be used
      * for any initialization code.
      */
+    
     @Override
     public void robotInit() {
-        debugStream = System.out;
-        poller = new VisionPoller();
+        System.out.println("Robot initializing");
+        driveTrain = new DriveTrain();
+        left = new Joystick(0);
+        right = new Joystick(1);
     }
 
     /**
@@ -43,7 +50,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        poller.getRelativePosition().print();
     }
 
     /**
@@ -71,11 +77,17 @@ public class Robot extends TimedRobot {
 
     }
 
+    @Override
+    public void teleopInit(){
+        Scheduler.getInstance().add(new Teleop());
+    }
+
     /**
      * This function is called periodically during operator control.
      */
     @Override
     public void teleopPeriodic() {
+        Scheduler.getInstance().add(new Teleop());
     }
 
     /**
