@@ -55,8 +55,7 @@ public class Teleop extends Command {
   protected void interrupted() {
   }
 
-  @Override
-  public void run(){
-    Scheduler.getInstance().add(this);
+  public static void run(){
+    Scheduler.getInstance().add(new Teleop());
   }
 }
