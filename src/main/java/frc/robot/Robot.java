@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         System.out.println("Robot initializing");
         driveTrain = new DriveTrain();
+        Scheduler.getInstance().enable();
         left = new Joystick(0);
         right = new Joystick(1);
     }
@@ -79,7 +80,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit(){
-        Scheduler.getInstance().add(new Teleop());
     }
 
     /**
@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        Scheduler.getInstance().add(new Teleop());
+        Scheduler.getInstance().run();
     }
 
     /**

@@ -33,7 +33,6 @@ public class Teleop extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    System.out.println("Executing teleop");
     driveTrain.setLeft(left.getY());
     driveTrain.setRight(right.getY());
   }
@@ -53,9 +52,5 @@ public class Teleop extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-  }
-
-  public static void run(){
-    Scheduler.getInstance().add(new Teleop());
   }
 }

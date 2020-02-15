@@ -18,8 +18,8 @@ import com.ctre.phoenix.motorcontrol.can.*;
 public class DriveTrain extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  private static final int[] LEFT_DEVICE_IDS = new int[]{0};
-  private static final int[] RIGHT_DEVICE_IDS = new int[]{3};
+  private static final int[] LEFT_DEVICE_IDS = new int[]{1, 2, 3};
+  private static final int[] RIGHT_DEVICE_IDS = new int[]{4, 5, 6};
 
   private TalonFX[] left;
   private TalonFX[] right;
@@ -52,7 +52,7 @@ public class DriveTrain extends Subsystem {
 
   public void setRight(double value){
     for(int i=0; i<right.length; i++){
-      right[i].set(ControlMode.PercentOutput, value);
+      right[i].set(ControlMode.PercentOutput, -value);
     }
   }
 }
