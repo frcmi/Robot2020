@@ -23,9 +23,8 @@ import frc.robot.subsystems.*;
  */
 public class Robot extends TimedRobot {
     public static PrintStream debugStream;
-    public static DriveTrain driveTrain;
-    public static Joystick left;
-    public static Joystick right;
+    public static RobotContainer container;
+    
     /**
      * This function is run when the robot is first started up and should be used
      * for any initialization code.
@@ -34,10 +33,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         System.out.println("Robot initializing");
-        driveTrain = new DriveTrain();
+        container = new RobotContainer();
         Scheduler.getInstance().enable();
-        left = new Joystick(0);
-        right = new Joystick(1);
     }
 
     /**
@@ -80,6 +77,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit(){
+        Scheduler.getInstance().removeAll();
     }
 
     /**

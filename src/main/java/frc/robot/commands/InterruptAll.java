@@ -7,22 +7,14 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.robot.Robot;
-import frc.robot.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Teleop extends Command {
-  private DriveTrain driveTrain;
-  private Joystick left;
-  private Joystick right;
-
-  public Teleop() {
-    driveTrain = Robot.container.driveTrain;
-    requires(driveTrain);
-    left = Robot.container.leftJoystick;
-    right = Robot.container.rightJoystick;
+public class InterruptAll extends Command {
+  public InterruptAll(Subsystem... subsystems) {
+    for (int i=0; i<subsystems.length; i++){
+      requires(subsystems[i]);
+    }
   }
 
   // Called just before this Command runs the first time
@@ -33,7 +25,6 @@ public class Teleop extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    driveTrain.tankDrive(left.getY(), right.getY(), true);
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -51,5 +42,6 @@ public class Teleop extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    
   }
 }
