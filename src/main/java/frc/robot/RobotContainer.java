@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.commands.InterruptAll;
-import frc.robot.commands.Teleop;
+import frc.robot.commands.ManualDrive;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -44,11 +44,8 @@ public class RobotContainer {
   public JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
   public JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
 
-  // left/right dpad - turret, up/down dpad - hood, right trigger - shooter rpm,
-  // right stick up/down - acquirer, back button + right stick up/down - feeder,
-  
   // commands
-  private final Teleop teleop = new Teleop();
+  private final ManualDrive manualDrive = new ManualDrive();
   private InterruptAll interruptAll = new InterruptAll(driveTrain);
 
   // autonomous chooser
@@ -86,7 +83,7 @@ public class RobotContainer {
     System.out.println("RobotContainer");
 
     // subsystem default commands
-    driveTrain.setDefaultCommand(teleop);
+    driveTrain.setDefaultCommand(manualDrive);
 
     // leds.setDefaultCommand(ledTest);
 
@@ -124,7 +121,7 @@ public class RobotContainer {
     AutoPath path = autoPathChooser.getSelected();
     //Scheduler.getInstance().add(new SetStartPosition(drive, path.getStartingPosition()));
     
-    return new Teleop();
+    return new ManualDrive();
     /*
     try {
       return new FollowPathWeaverFile(drive, path.getFile());

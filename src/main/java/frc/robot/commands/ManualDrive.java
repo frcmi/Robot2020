@@ -13,12 +13,12 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.Robot;
 import frc.robot.subsystems.DriveTrain;
 
-public class Teleop extends Command {
+public class ManualDrive extends Command {
   private DriveTrain driveTrain;
   private Joystick left;
   private Joystick right;
 
-  public Teleop() {
+  public ManualDrive() {
     driveTrain = Robot.container.driveTrain;
     requires(driveTrain);
     left = Robot.container.leftJoystick;

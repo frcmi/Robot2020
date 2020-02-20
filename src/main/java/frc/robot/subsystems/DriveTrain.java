@@ -21,8 +21,6 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 
-import frc.robot.commands.Teleop;
-
 import java.util.Arrays;
 
 import com.ctre.phoenix.motorcontrol.*;
@@ -62,6 +60,8 @@ public class DriveTrain extends Subsystem {
 
   public DriveTrain(){
     super();
+    
+    //Sets speed controller groups and differential drive
     leftMotors = new SpeedController[DriveConstants.kLeftDeviceIds.length];
     for(int i=0; i<DriveConstants.kLeftDeviceIds.length; i++){
       leftMotors[i] = new WPI_TalonFX(DriveConstants.kLeftDeviceIds[i]);
@@ -72,12 +72,12 @@ public class DriveTrain extends Subsystem {
       rightMotors[i] = new WPI_TalonFX(DriveConstants.kRightDeviceIds[i]);
     }
 
-    //Sets speed controller groups and differential drive
     left = new SpeedControllerGroup(leftMotors[0], leftMotors[1], leftMotors[2]);
     right = new SpeedControllerGroup(rightMotors[0], rightMotors[1], rightMotors[2]);
 
     left.setInverted(DriveConstants.kLeftMotorReversed);
     right.setInverted(DriveConstants.kRightMotorReversed);
+
     diffDrive = new DifferentialDrive(left, right);
 
     //Sets NavX
@@ -139,6 +139,19 @@ public class DriveTrain extends Subsystem {
     right.setVoltage(-rightVolts);
     diffDrive.feed();
   }
+  /**
+   * Drive method that uses 2 inputs on the x and z axis.
+   * 
+   * Allows drive with singuler joystick/controller.
+   * 
+   * @param xPower   The robot's speed along the X axis [-1.0..1.0]. + is forward
+   * @param rotation The robot's rotation rate around the Z axis [-1.0..1.0]. + is
+   *                 Clockwise.
+  */
+  public void arcadeDrive(double xPower, double rotation) {
+    diffDrive.setDeadband(0);
+    diffDrive.arcadeDrive(xPower, rotation, false);
+  }
 
   /**
    * Resets the odometry to the specified pose.
@@ -159,6 +172,24 @@ public class DriveTrain extends Subsystem {
   }
 
   /**
+   * Gets the left drive encoder.
+   *
+   * @return the left drive encoder
+  */
+  public Encoder getLeftEncoder() {
+    return leftEncoder;
+  }
+
+  /**
+   * Gets the right drive encoder.
+   *
+   * @return the right drive encoder
+  */
+  public Encoder getRightEncoder() {
+    return rightEncoder;
+  }
+
+  /**
    * Zeroes the heading of the robot.
   */
   public void resetHeading() {
@@ -169,7 +200,6 @@ public class DriveTrain extends Subsystem {
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
-    setDefaultCommand(new Teleop());
   }
 
   public void addShuffleBoardTab() {
