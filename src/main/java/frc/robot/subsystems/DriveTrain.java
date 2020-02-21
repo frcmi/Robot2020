@@ -33,7 +33,7 @@ public class DriveTrain extends Subsystem {
   static class DriveConstants{
     public static final boolean kLeftEncoderReversed = false;
     public static final boolean kRightEncoderReversed = false;
-    public static final boolean kLeftMotorReversed = true;
+    public static final boolean kLeftMotorReversed = false;
     public static final boolean kRightMotorReversed = false;
     public static final int[] kLeftEncoderPorts = {0, 1};
     public static final int[] kRightEncoderPorts = {2, 3};

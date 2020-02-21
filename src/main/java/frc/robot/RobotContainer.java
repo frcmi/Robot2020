@@ -45,8 +45,8 @@ public class RobotContainer {
   public JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
 
   // commands
-  private final ManualDrive manualDrive = new ManualDrive();
-  private InterruptAll interruptAll = new InterruptAll(driveTrain);
+  private ManualDrive manualDrive;
+  private InterruptAll interruptAll;
 
   // autonomous chooser
   private SendableChooser<AutoPath> autoPathChooser;
@@ -80,7 +80,14 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+  }
+
+  public void initialize(){
     System.out.println("RobotContainer");
+
+    //Initialize commands
+    manualDrive = new ManualDrive();
+    interruptAll = new InterruptAll(driveTrain);
 
     // subsystem default commands
     driveTrain.setDefaultCommand(manualDrive);
@@ -98,7 +105,6 @@ public class RobotContainer {
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoTab.add("autoPath", autoPathChooser);
-
   }
 
   /**

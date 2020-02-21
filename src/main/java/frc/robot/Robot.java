@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         System.out.println("Robot initializing");
         container = new RobotContainer();
+        container.initialize();
         Scheduler.getInstance().enable();
     }
 
