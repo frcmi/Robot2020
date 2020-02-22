@@ -51,64 +51,78 @@ public class DriveTrain extends Subsystem {
 
   private AHRS navx;
 
-  private final DifferentialDrive diffDrive;
+  private DifferentialDrive diffDrive;
 
   // The odometry (position-tracker)
   private DifferentialDriveOdometry odometry;
 
   private Encoder leftEncoder, rightEncoder;
 
+  public boolean working = false;
+
   public DriveTrain(){
     super();
-    
-    //Sets speed controller groups and differential drive
-    leftMotors = new SpeedController[DriveConstants.kLeftDeviceIds.length];
-    for(int i=0; i<DriveConstants.kLeftDeviceIds.length; i++){
-      leftMotors[i] = new WPI_TalonFX(DriveConstants.kLeftDeviceIds[i]);
+    working = true;
+    try{
+      //Sets speed controller groups and differential drive
+      leftMotors = new SpeedController[DriveConstants.kLeftDeviceIds.length];
+      for(int i=0; i<DriveConstants.kLeftDeviceIds.length; i++){
+        leftMotors[i] = new WPI_TalonFX(DriveConstants.kLeftDeviceIds[i]);
+      }
+
+      rightMotors = new SpeedController[DriveConstants.kRightDeviceIds.length];
+      for(int i=0; i<DriveConstants.kRightDeviceIds.length; i++){
+        rightMotors[i] = new WPI_TalonFX(DriveConstants.kRightDeviceIds[i]);
+      }
+
+      left = new SpeedControllerGroup(leftMotors[0], leftMotors[1], leftMotors[2]);
+      right = new SpeedControllerGroup(rightMotors[0], rightMotors[1], rightMotors[2]);
+
+      left.setInverted(DriveConstants.kLeftMotorReversed);
+      right.setInverted(DriveConstants.kRightMotorReversed);
+
+      diffDrive = new DifferentialDrive(left, right);
+
+      //Sets NavX
+      navx = new AHRS(SPI.Port.kMXP);
+      resetHeading();
+
+      //Sets odometry
+      odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), new Pose2d(0.0, 0.0, new Rotation2d()));
+
+      //Sets encoders
+      leftEncoder = new Encoder(DriveConstants.kLeftEncoderPorts[0], DriveConstants.kLeftEncoderPorts[1], DriveConstants.kLeftEncoderReversed);
+      rightEncoder = new Encoder(DriveConstants.kRightEncoderPorts[0], DriveConstants.kRightEncoderPorts[1], DriveConstants.kRightEncoderReversed);
+      leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+      rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+      resetEncoders();
     }
-
-    rightMotors = new SpeedController[DriveConstants.kRightDeviceIds.length];
-    for(int i=0; i<DriveConstants.kRightDeviceIds.length; i++){
-      rightMotors[i] = new WPI_TalonFX(DriveConstants.kRightDeviceIds[i]);
+    catch(Exception e){
+      e.printStackTrace();
+      working = false;
+      leftMotors = null;
+      rightMotors = null;
+      diffDrive = null;
+      odometry = null;
     }
-
-    left = new SpeedControllerGroup(leftMotors[0], leftMotors[1], leftMotors[2]);
-    right = new SpeedControllerGroup(rightMotors[0], rightMotors[1], rightMotors[2]);
-
-    left.setInverted(DriveConstants.kLeftMotorReversed);
-    right.setInverted(DriveConstants.kRightMotorReversed);
-
-    diffDrive = new DifferentialDrive(left, right);
-
-    //Sets NavX
-    navx = new AHRS(SPI.Port.kMXP);
-    resetHeading();
-
-    //Sets odometry
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), new Pose2d(0.0, 0.0, new Rotation2d()));
-
-    //Sets encoders
-    leftEncoder = new Encoder(DriveConstants.kLeftEncoderPorts[0], DriveConstants.kLeftEncoderPorts[1], DriveConstants.kLeftEncoderReversed);
-    rightEncoder = new Encoder(DriveConstants.kRightEncoderPorts[0], DriveConstants.kRightEncoderPorts[1], DriveConstants.kRightEncoderReversed);
-    leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
-    rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
-    resetEncoders();
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if(working){
+      // This method will be called once per scheduler run
 
-    // Get my gyro angle. We are negating the value because gyros return positive
-    // values as the robot turns clockwise. This is not standard convention that is
-    // used by the WPILib classes.
-    Rotation2d gyroAngle = Rotation2d.fromDegrees(-navx.getAngle());
+      // Get my gyro angle. We are negating the value because gyros return positive
+      // values as the robot turns clockwise. This is not standard convention that is
+      // used by the WPILib classes.
+      Rotation2d gyroAngle = Rotation2d.fromDegrees(-navx.getAngle());
 
-    // Update the pose
-    double leftDistance = leftEncoder.getDistance();
-    double rightDistance = rightEncoder.getDistance();
+      // Update the pose
+      double leftDistance = leftEncoder.getDistance();
+      double rightDistance = rightEncoder.getDistance();
 
-    odometry.update(gyroAngle, leftDistance, rightDistance);
+      odometry.update(gyroAngle, leftDistance, rightDistance);
+    }
   }
 
   /**
@@ -121,7 +135,7 @@ public class DriveTrain extends Subsystem {
    * @param squareInputs squares motor inputs if true
   */
   public void tankDrive(double leftPower, double rightPower, boolean squareInputs) {
-    diffDrive.tankDrive(leftPower, rightPower, squareInputs);
+    if(working) diffDrive.tankDrive(leftPower, rightPower, squareInputs);
   }
 
   /**
@@ -135,9 +149,11 @@ public class DriveTrain extends Subsystem {
    *                   forward.
   */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
-    left.setVoltage(leftVolts);
-    right.setVoltage(-rightVolts);
-    diffDrive.feed();
+    if(working){
+      left.setVoltage(leftVolts);
+      right.setVoltage(-rightVolts);
+      diffDrive.feed();
+    }
   }
   /**
    * Drive method that uses 2 inputs on the x and z axis.
@@ -149,8 +165,10 @@ public class DriveTrain extends Subsystem {
    *                 Clockwise.
   */
   public void arcadeDrive(double xPower, double rotation) {
-    diffDrive.setDeadband(0);
-    diffDrive.arcadeDrive(xPower, rotation, false);
+    if(working){
+      diffDrive.setDeadband(0);
+      diffDrive.arcadeDrive(xPower, rotation, false);
+    }
   }
 
   /**
@@ -159,16 +177,20 @@ public class DriveTrain extends Subsystem {
    * @param pose The pose to which to set the odometry.
   */
   public void resetOdometry(Pose2d pose) {
-    resetEncoders();
-    odometry.resetPosition(pose, pose.getRotation());
+    if(working){
+      resetEncoders();
+      odometry.resetPosition(pose, pose.getRotation());
+    }
   }
 
   /**
    * Resets Encoders
   */
   public void resetEncoders() {
-    leftEncoder.reset();
-    rightEncoder.reset();
+    if(working){
+      leftEncoder.reset();
+      rightEncoder.reset();
+    }
   }
 
   /**
@@ -177,7 +199,11 @@ public class DriveTrain extends Subsystem {
    * @return the left drive encoder
   */
   public Encoder getLeftEncoder() {
-    return leftEncoder;
+    if(working){
+      return leftEncoder;
+    } else{
+      return null;
+    }
   }
 
   /**
@@ -186,14 +212,20 @@ public class DriveTrain extends Subsystem {
    * @return the right drive encoder
   */
   public Encoder getRightEncoder() {
-    return rightEncoder;
+    if(working){
+      return rightEncoder;
+    } else{
+      return null;
+    }
   }
 
   /**
    * Zeroes the heading of the robot.
   */
   public void resetHeading() {
-    navx.reset();
+    if(working){
+      navx.reset();
+    }
   }
 
   @Override
@@ -203,30 +235,32 @@ public class DriveTrain extends Subsystem {
   }
 
   public void addShuffleBoardTab() {
-    ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
+    if(working){
+      ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
 
-    // Add test buttons to a layout in the tab
-    ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
-
-    //commandsLayout.add("Turn to 90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(90));
-
-    // Add the DifferentialDrive object and encoders to a list layout in the tab.
-    ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).
-      withPosition(2, 0).
-      withSize(4, 5);
-
-    diffDriveLayout.add("Differential Drive", diffDrive).withWidget(BuiltInWidgets.kDifferentialDrive);
-    diffDriveLayout.add("Left Encoder", leftEncoder).withWidget(BuiltInWidgets.kEncoder);
-    diffDriveLayout.add("Right Encoder", rightEncoder).withWidget(BuiltInWidgets.kEncoder);
-
-    // Add the odometry to a layout in the tab.
-    ShuffleboardLayout positionLayout = driveTab.getLayout("Position", BuiltInLayouts.kList).
-      withPosition(6, 0).
-      withSize(2, 2);
-
-    positionLayout.addNumber("X", () -> getPose().getTranslation().getX());
-    positionLayout.addNumber("Y", () -> getPose().getTranslation().getY());
-    positionLayout.addNumber("Heading", () -> getHeadingContinuous());
+      // Add test buttons to a layout in the tab
+      ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
+  
+      //commandsLayout.add("Turn to 90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(90));
+  
+      // Add the DifferentialDrive object and encoders to a list layout in the tab.
+      ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).
+        withPosition(2, 0).
+        withSize(4, 5);
+  
+      diffDriveLayout.add("Differential Drive", diffDrive).withWidget(BuiltInWidgets.kDifferentialDrive);
+      diffDriveLayout.add("Left Encoder", leftEncoder).withWidget(BuiltInWidgets.kEncoder);
+      diffDriveLayout.add("Right Encoder", rightEncoder).withWidget(BuiltInWidgets.kEncoder);
+  
+      // Add the odometry to a layout in the tab.
+      ShuffleboardLayout positionLayout = driveTab.getLayout("Position", BuiltInLayouts.kList).
+        withPosition(6, 0).
+        withSize(2, 2);
+  
+      positionLayout.addNumber("X", () -> getPose().getTranslation().getX());
+      positionLayout.addNumber("Y", () -> getPose().getTranslation().getY());
+      positionLayout.addNumber("Heading", () -> getHeadingContinuous());
+    }
   }
 
   /**
@@ -235,7 +269,11 @@ public class DriveTrain extends Subsystem {
    * @return the robot's heading in degrees, from -180 to 180
   */
   public double getHeading() {
-    return Math.IEEEremainder(this.navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    if(working){
+      return Math.IEEEremainder(this.navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    } else{
+      return 0;
+    }
   }
 
   /**
@@ -244,7 +282,12 @@ public class DriveTrain extends Subsystem {
    * @return the continuous heading of the robot
   */
   public double getHeadingContinuous() {
-    return navx.getAngle() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    if(working){
+      return navx.getAngle() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    } else{
+      return 0;
+    }
+
   }
 
   /**
@@ -253,7 +296,11 @@ public class DriveTrain extends Subsystem {
    * @return The turn rate of the robot, in degrees per second
   */
   public double getTurnRate() {
-    return navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    if(working){
+      return navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    } else{
+      return 0;
+    }
   }
 
   /**
@@ -261,7 +308,11 @@ public class DriveTrain extends Subsystem {
    * @return The x,y position of the robot
   */
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    if(working){
+      return odometry.getPoseMeters();
+    } else{
+      return null;
+    }
   }
 
 }
