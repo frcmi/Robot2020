@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.Solenoid;
  * Add your docs here.
  */
 public class Camera extends Subsystem {
-  public static class CameraConstants {
+  private static class Constants {
     public static final int pcmID = 11;
     public static final int pcmPort = 7;
   }
@@ -30,7 +30,7 @@ public class Camera extends Subsystem {
   public Camera() {
     super();
     opsi = NetworkTableInstance.getDefault().getTable("OpenSight");
-    light = new Solenoid(CameraConstants.pcmID, CameraConstants.pcmPort);
+    light = new Solenoid(Constants.pcmID, Constants.pcmPort);
     light.set(true);
   }
 

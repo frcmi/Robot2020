@@ -30,7 +30,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
  * Add your docs here.
  */
 public class DriveTrain extends Subsystem {
-  static class DriveConstants{
+  private static class Constants{
     public static final boolean kLeftEncoderReversed = false;
     public static final boolean kRightEncoderReversed = false;
     public static final boolean kLeftMotorReversed = false;
@@ -65,21 +65,21 @@ public class DriveTrain extends Subsystem {
     working = true;
     try{
       //Sets speed controller groups and differential drive
-      leftMotors = new SpeedController[DriveConstants.kLeftDeviceIds.length];
-      for(int i=0; i<DriveConstants.kLeftDeviceIds.length; i++){
-        leftMotors[i] = new WPI_TalonFX(DriveConstants.kLeftDeviceIds[i]);
+      leftMotors = new SpeedController[Constants.kLeftDeviceIds.length];
+      for(int i=0; i<Constants.kLeftDeviceIds.length; i++){
+        leftMotors[i] = new WPI_TalonFX(Constants.kLeftDeviceIds[i]);
       }
 
-      rightMotors = new SpeedController[DriveConstants.kRightDeviceIds.length];
-      for(int i=0; i<DriveConstants.kRightDeviceIds.length; i++){
-        rightMotors[i] = new WPI_TalonFX(DriveConstants.kRightDeviceIds[i]);
+      rightMotors = new SpeedController[Constants.kRightDeviceIds.length];
+      for(int i=0; i<Constants.kRightDeviceIds.length; i++){
+        rightMotors[i] = new WPI_TalonFX(Constants.kRightDeviceIds[i]);
       }
 
       left = new SpeedControllerGroup(leftMotors[0], leftMotors[1], leftMotors[2]);
       right = new SpeedControllerGroup(rightMotors[0], rightMotors[1], rightMotors[2]);
 
-      left.setInverted(DriveConstants.kLeftMotorReversed);
-      right.setInverted(DriveConstants.kRightMotorReversed);
+      left.setInverted(Constants.kLeftMotorReversed);
+      right.setInverted(Constants.kRightMotorReversed);
 
       diffDrive = new DifferentialDrive(left, right);
 
@@ -91,10 +91,10 @@ public class DriveTrain extends Subsystem {
       odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), new Pose2d(0.0, 0.0, new Rotation2d()));
 
       //Sets encoders
-      leftEncoder = new Encoder(DriveConstants.kLeftEncoderPorts[0], DriveConstants.kLeftEncoderPorts[1], DriveConstants.kLeftEncoderReversed);
-      rightEncoder = new Encoder(DriveConstants.kRightEncoderPorts[0], DriveConstants.kRightEncoderPorts[1], DriveConstants.kRightEncoderReversed);
-      leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
-      rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+      leftEncoder = new Encoder(Constants.kLeftEncoderPorts[0], Constants.kLeftEncoderPorts[1], Constants.kLeftEncoderReversed);
+      rightEncoder = new Encoder(Constants.kRightEncoderPorts[0], Constants.kRightEncoderPorts[1], Constants.kRightEncoderReversed);
+      leftEncoder.setDistancePerPulse(Constants.kEncoderDistancePerPulse);
+      rightEncoder.setDistancePerPulse(Constants.kEncoderDistancePerPulse);
       resetEncoders();
     }
     catch(Exception e){
@@ -270,7 +270,7 @@ public class DriveTrain extends Subsystem {
   */
   public double getHeading() {
     if(working){
-      return Math.IEEEremainder(this.navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+      return Math.IEEEremainder(this.navx.getAngle(), 360) * (Constants.kGyroReversed ? -1.0 : 1.0);
     } else{
       return 0;
     }
@@ -283,7 +283,7 @@ public class DriveTrain extends Subsystem {
   */
   public double getHeadingContinuous() {
     if(working){
-      return navx.getAngle() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+      return navx.getAngle() * (Constants.kGyroReversed ? -1.0 : 1.0);
     } else{
       return 0;
     }
@@ -297,7 +297,7 @@ public class DriveTrain extends Subsystem {
   */
   public double getTurnRate() {
     if(working){
-      return navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+      return navx.getRate() * (Constants.kGyroReversed ? -1.0 : 1.0);
     } else{
       return 0;
     }

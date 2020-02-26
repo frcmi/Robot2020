@@ -121,8 +121,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     interruptAllButton.whenPressed(interruptAll);
-    toggleLightButton.whenPressed(new ToggleLight());
-
+    toggleLightButton.whenPressed(toggleLight);
+    
   }
 
   /**
