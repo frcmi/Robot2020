@@ -18,9 +18,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Camera;
 import frc.robot.commands.InterruptAll;
 import frc.robot.commands.ManualDrive;
+import frc.robot.commands.SetFlywheelSpeed;
 import frc.robot.commands.ToggleLight;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
@@ -39,6 +41,7 @@ public class RobotContainer {
   // subsystems
   public final DriveTrain driveTrain = new DriveTrain();
   public final Camera camera = new Camera();
+  public final Shooter shooter = new Shooter();
 
   // Joystick and JoystickButtons
   public final Joystick leftJoystick = new Joystick(0);
@@ -47,6 +50,7 @@ public class RobotContainer {
   public JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
   public JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
   public JoystickButton toggleLightButton = new JoystickButton(leftJoystick, 3);
+  public JoystickButton testFlywheelButton = new JoystickButton(rightJoystick, 3);
 
   // commands
   private ManualDrive manualDrive;
@@ -92,7 +96,7 @@ public class RobotContainer {
 
     //Initialize commands
     manualDrive = new ManualDrive();
-    interruptAll = new InterruptAll(driveTrain);
+    interruptAll = new InterruptAll(driveTrain, camera, shooter);
 
     // subsystem default commands
     driveTrain.setDefaultCommand(manualDrive);
@@ -122,7 +126,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     interruptAllButton.whenPressed(interruptAll);
     toggleLightButton.whenPressed(toggleLight);
-    
+    testFlywheelButton.whenPressed(new SetFlywheelSpeed(1));
   }
 
   /**
