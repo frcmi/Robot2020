@@ -26,7 +26,7 @@ public class Shooter extends Subsystem {
     public static final double flywheelNeutralDeadband = 0.001;
     public static final int timeoutMs = 30;
     public static final double flywheelkP = 0.1;
-    public static final double flywheelkI = 0.001;
+    public static final double flywheelkI = 0.000001;
     public static final double flywheelkD = 5;
     public static final double flywheelkF = 1023.0/20660.0; //1023 represents output value to Talon at 100%, 20660 represents Velocity units at 100% output
     public static final double flywheelIz = 300;
