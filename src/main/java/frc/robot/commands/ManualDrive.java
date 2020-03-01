@@ -33,7 +33,10 @@ public class ManualDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(driveTrain.working) driveTrain.tankDrive(left.getY(), right.getY(), true);
+    if(driveTrain.working) {
+      //driveTrain.tankDrive(left.getY(), right.getY());
+      driveTrain.arcadeDrive(right.getY(), right.getX());
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

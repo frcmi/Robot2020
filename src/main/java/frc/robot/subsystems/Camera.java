@@ -21,15 +21,24 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Camera extends Subsystem {
   private static class Constants {
     public static final int pcmID = 11;
-    public static final int pcmPort = 7;
+    public static final int pcmPort = 4;
   }
 
-  Solenoid light;
-  NetworkTable opsi;
+  private Solenoid light;
+  private NetworkTable opsi;
+  private boolean networkTableLoadSuccess;
 
   public Camera() {
     super();
-    opsi = NetworkTableInstance.getDefault().getTable("OpenSight");
+    networkTableLoadSuccess = true;
+    try{
+      opsi = NetworkTableInstance.getDefault().getTable("OpenSight");
+    } catch(Exception e){
+      System.out.println("NetworkTable not initialized");
+      e.printStackTrace();
+      networkTableLoadSuccess = false;
+    }
+
     light = new Solenoid(Constants.pcmID, Constants.pcmPort);
     light.set(true);
   }
@@ -45,14 +54,18 @@ public class Camera extends Subsystem {
   }
 
   public Pose2d getPose(){
-    Pose2d p = new Pose2d(opsi.getEntry("position-x").getDouble(0), 
-                          opsi.getEntry("position-y").getDouble(0), 
-                          Rotation2d.fromDegrees(opsi.getEntry("camera-angle").getDouble(0)));
-    
-    if(p.getTranslation().getX() == 0.0 && p.getTranslation().getY() == 0.0){
+    if(networkTableLoadSuccess){
+      Pose2d p = new Pose2d(opsi.getEntry("position-x").getDouble(0), 
+      opsi.getEntry("position-y").getDouble(0), 
+      Rotation2d.fromDegrees(opsi.getEntry("camera-angle").getDouble(0)));
+      if(p.getTranslation().getX() == 0.0 && p.getTranslation().getY() == 0.0){
+        return null;
+      } else{
+        return p;
+      }
+    }
+    else{
       return null;
-    } else{
-      return p;
     }
   }
 }

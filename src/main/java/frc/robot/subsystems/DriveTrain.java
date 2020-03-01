@@ -43,6 +43,7 @@ public class DriveTrain extends Subsystem {
     private static final int kEncoderCPR = 1000; //TODO get this
     private static final double kWheelDiameterMeters = 0.1524;
     public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / kEncoderCPR;
+    public static final boolean squareInputs = false;
   }
 
   private SpeedController[] leftMotors, rightMotors;
@@ -81,7 +82,7 @@ public class DriveTrain extends Subsystem {
       left.setInverted(Constants.kLeftMotorReversed);
       right.setInverted(Constants.kRightMotorReversed);
 
-      diffDrive = new DifferentialDrive(left, right);
+      diffDrive = new DifferentialDrive(right, left);
 
       //Sets NavX
       navx = new AHRS(SPI.Port.kMXP);
@@ -132,10 +133,9 @@ public class DriveTrain extends Subsystem {
    * @param leftPower    value from -1 to 1 set to left motor group. + is forward.
    * @param rightPower   value from -1 to 1 set to right motor group. + is
    *                     forward.
-   * @param squareInputs squares motor inputs if true
   */
-  public void tankDrive(double leftPower, double rightPower, boolean squareInputs) {
-    if(working) diffDrive.tankDrive(leftPower, rightPower, squareInputs);
+  public void tankDrive(double leftPower, double rightPower) {
+    if(working) diffDrive.tankDrive(leftPower, rightPower, Constants.squareInputs);
   }
 
   /**

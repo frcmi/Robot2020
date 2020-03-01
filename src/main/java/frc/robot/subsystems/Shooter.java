@@ -8,7 +8,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.SpeedController;
@@ -21,25 +23,67 @@ public class Shooter extends Subsystem {
     public static final int actuatorID = 9;
     public static final double speedThreshold = 0;
     public static final double angleThreshold = 0;
+    public static final double flywheelNeutralDeadband = 0.001;
+    public static final int timeoutMs = 30;
+    public static final double flywheelkP = 0.1;
+    public static final double flywheelkI = 0.001;
+    public static final double flywheelkD = 5;
+    public static final double flywheelkF = 1023.0/20660.0; //1023 represents output value to Talon at 100%, 20660 represents Velocity units at 100% output
+    public static final double flywheelIz = 300;
+    public static final double flywheelPeakOut = 1.00;
+    public static final double rpmToUnitsPer100ms = 2048.0/600.0;
   }
 
   private TalonFX top, bottom, actuator;
   private double desiredSpeed, desiredAngle;
 
   public Shooter(){
+    desiredSpeed = 0;
+    desiredAngle = 0;
     top = new TalonFX(Constants.topID);
     bottom = new TalonFX(Constants.bottomID);
     actuator = new TalonFX(Constants.actuatorID);
-    top.setInverted(true);
-    desiredSpeed = 0;
-    desiredAngle = 0;
+    bottom.setInverted(true);
+
+    top.configFactoryDefault();
+    bottom.configFactoryDefault();
+    actuator.configFactoryDefault();
+
+    top.configNeutralDeadband(Constants.flywheelNeutralDeadband);
+    bottom.configNeutralDeadband(Constants.flywheelNeutralDeadband);
+
+    top.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.timeoutMs);
+    bottom.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.timeoutMs);
+
+    //Configures peak outputs
+    top.configNominalOutputForward(0, Constants.timeoutMs);
+    top.configNominalOutputReverse(0, Constants.timeoutMs);
+    top.configClosedLoopPeakOutput(1, Constants.timeoutMs);
+
+    bottom.configNominalOutputForward(0, Constants.timeoutMs);
+    bottom.configNominalOutputReverse(0, Constants.timeoutMs);
+    bottom.configClosedLoopPeakOutput(1, Constants.timeoutMs);
+
+    //Configures PID constants
+    top.config_kF(0, Constants.flywheelkF, Constants.timeoutMs);
+    top.config_kP(0, Constants.flywheelkP, Constants.timeoutMs);
+    top.config_kI(0, Constants.flywheelkI, Constants.timeoutMs);
+    top.config_kD(0, Constants.flywheelkD, Constants.timeoutMs);
+
+    bottom.config_kF(0, Constants.flywheelkF, Constants.timeoutMs);
+    bottom.config_kP(0, Constants.flywheelkP, Constants.timeoutMs);
+    bottom.config_kI(0, Constants.flywheelkI, Constants.timeoutMs);
+    bottom.config_kD(0, Constants.flywheelkD, Constants.timeoutMs);
+
+
+
   }
 
-  //Sets flywheel to speed given in position moved per 100ms
+  //Sets flywheel to speed given in rpm
   public void setFlywheelSpeed(double speed){
     desiredSpeed = speed;
-    top.set(TalonFXControlMode.Velocity, speed);
-    bottom.set(TalonFXControlMode.Velocity, speed);
+    top.set(TalonFXControlMode.Velocity, speed*Constants.rpmToUnitsPer100ms);
+    bottom.set(TalonFXControlMode.Velocity, speed*Constants.rpmToUnitsPer100ms);
   }
 
   public void stop(){
