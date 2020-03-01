@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.Solenoid;
  */
 public class Camera extends Subsystem {
   private static class Constants {
-    public static final int pcmID = 11;
+    public static final int pcmID = 12;
     public static final int pcmPort = 4;
   }
 

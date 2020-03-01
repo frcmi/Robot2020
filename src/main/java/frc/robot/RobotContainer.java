@@ -47,10 +47,10 @@ public class RobotContainer {
   public final Joystick leftJoystick = new Joystick(0);
   public final Joystick rightJoystick = new Joystick(1);
 
-  public JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 31);
+  public JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 3);
   public JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
   public JoystickButton toggleLightButton = new JoystickButton(leftJoystick, 3);
-  public JoystickButton flywheelOnButton = new JoystickButton(rightJoystick, 2);
+  public JoystickButton flywheelOnButton = new JoystickButton(leftJoystick, 1);
   public JoystickButton flywheelOffButton = new JoystickButton(rightJoystick, 1);
 
   // commands
@@ -127,7 +127,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     interruptAllButton.whenPressed(interruptAll);
     toggleLightButton.whenPressed(toggleLight);
-    flywheelOnButton.whenPressed(new SetFlywheelSpeed(500));
+    flywheelOnButton.whenPressed(new SetFlywheelSpeed(4000));
     flywheelOffButton.whenPressed(new SetFlywheelSpeed(0));
   }
 
