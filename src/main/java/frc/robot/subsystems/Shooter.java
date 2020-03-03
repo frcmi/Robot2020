@@ -102,6 +102,7 @@ public class Shooter extends Subsystem {
     bottom.set(TalonFXControlMode.PercentOutput, 0);
   }
 
+<<<<<<< HEAD
   //converts angle to actuator offset
   public double angleToActuatorLength(double angle){
     return Math.sqrt(Constants.shooterConstant1 - Constants.shooterConstant2*Math.cos(angle));
@@ -119,6 +120,11 @@ public class Shooter extends Subsystem {
     double lengthDifference = length - Constants.actuatorMinLength;
     double ticks = lengthDifference/Constants.actuatorMetersPerTick;
     actuator.set(TalonFXControlMode.Position, ticks);
+=======
+  // TODO @tong Sets piston setpoint to given value in meters
+  public void setPistonOffset(double pistonOffset){
+
+>>>>>>> Minor tweaks
   }
 
   //TODO @tong sets the shooter to an angle given in radians
