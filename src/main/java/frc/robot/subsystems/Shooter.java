@@ -21,8 +21,8 @@ public class Shooter extends Subsystem {
     public static final int topID = 7;
     public static final int bottomID = 8;
     public static final int actuatorID = 9;
-    public static final double speedThreshold = 0;
-    public static final double angleThreshold = 0;
+    public static final double speedThreshold = 100;
+    public static final double angleThreshold = 5*Math.PI/180;
     public static final double flywheelNeutralDeadband = 0.001;
     public static final int timeoutMs = 30;
     public static final double flywheelkP = 0.1;
@@ -37,11 +37,12 @@ public class Shooter extends Subsystem {
     public static final double shooterConstantA = 0.4366;
     public static final double shooterConstantB = 0.4477;
     public static final double pistonYOffset = 0.01588;
-    public static final double actuatorMinLength = 0.3334;
-    public static final double actuatorMaxLength = 0.8477;
+    public static final double errorBound = 0.01;
+    public static final double actuatorMinLength = 0.3334+errorBound;
+    public static final double actuatorMaxLength = 0.8477-errorBound;
     public static final double shooterConstant1 = Math.pow(shooterConstantA, 2) + Math.pow(shooterConstantB, 2) - Math.pow(pistonYOffset, 2); // A^2+B^2-y^2
     public static final double shooterConstant2 = 2*shooterConstantA*shooterConstantB; // 2AB
-    public static final double actuatorMetersPerRadian = 1;
+    public static final double actuatorMetersPerRadian = 0.00551254848;
     public static final double actuatorMetersPerTick = actuatorMetersPerRadian*2*Math.PI/ticksPerRevolution;
   }
   private TalonFX top, bottom, actuator;
@@ -61,9 +62,11 @@ public class Shooter extends Subsystem {
 
     top.configNeutralDeadband(Constants.flywheelNeutralDeadband);
     bottom.configNeutralDeadband(Constants.flywheelNeutralDeadband);
+    actuator.configNeutralDeadband(Constants.flywheelNeutralDeadband);
 
     top.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.timeoutMs);
     bottom.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.timeoutMs);
+    actuator.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.timeoutMs);
 
     //Configures peak outputs
     top.configNominalOutputForward(0, Constants.timeoutMs);
@@ -73,6 +76,11 @@ public class Shooter extends Subsystem {
     bottom.configNominalOutputForward(0, Constants.timeoutMs);
     bottom.configNominalOutputReverse(0, Constants.timeoutMs);
     bottom.configClosedLoopPeakOutput(1, Constants.timeoutMs);
+
+    actuator.configNominalOutputForward(0, Constants.timeoutMs);
+    actuator.configNominalOutputReverse(0, Constants.timeoutMs);
+    actuator.configClosedLoopPeakOutput(1, Constants.timeoutMs);
+
 
     //Configures PID constants
     top.config_kF(0, Constants.flywheelkF, Constants.timeoutMs);
@@ -85,6 +93,11 @@ public class Shooter extends Subsystem {
     bottom.config_kI(0, Constants.flywheelkI, Constants.timeoutMs);
     bottom.config_kD(0, Constants.flywheelkD, Constants.timeoutMs);
 
+    actuator.config_kF(0, Constants.flywheelkF, Constants.timeoutMs);
+    actuator.config_kP(0, Constants.flywheelkP, Constants.timeoutMs);
+    actuator.config_kI(0, Constants.flywheelkI, Constants.timeoutMs);
+    actuator.config_kD(0, Constants.flywheelkD, Constants.timeoutMs);
+
 
 
   }
@@ -96,10 +109,12 @@ public class Shooter extends Subsystem {
     bottom.set(TalonFXControlMode.Velocity, speed*Constants.rpmToUnitsPer100ms);
   }
 
+  //Stops all motors
   public void stop(){
     desiredSpeed = 0;
     top.set(TalonFXControlMode.PercentOutput, 0);
     bottom.set(TalonFXControlMode.PercentOutput, 0);
+    actuator.set(TalonFXControlMode.PercentOutput, 0);
   }
 
   //converts angle to actuator offset
@@ -112,7 +127,7 @@ public class Shooter extends Subsystem {
     return Math.acos((Constants.shooterConstant1-Math.pow(actuatorOffset, 2))/Constants.shooterConstant2);
   }
 
-  //TODO @tong sets the position of the actuator
+  //Sets actuator length setpoint to given value in meters
   public void setActuatorLength(double length){
     if(length > Constants.actuatorMaxLength) length = Constants.actuatorMaxLength;
     if(length < Constants.actuatorMinLength) length = Constants.actuatorMinLength;
@@ -121,20 +136,26 @@ public class Shooter extends Subsystem {
     actuator.set(TalonFXControlMode.Position, ticks);
   }
 
-  //TODO @tong sets the shooter to an angle given in radians
+  //Sets the shooter setpoint to an angle given in radians
   public void setAngle(double angle){
     desiredAngle = angle;
     setActuatorLength(angleToActuatorLength(angle));
   }
 
-  //TODO @tong gets current angle of the shooter
+  //Returns current angle of the shooter in radians
   public double getAngle(){
-    return 0;
+    double pos = actuator.getSelectedSensorPosition();
+    double angle = actuatorLengthToAngle(Constants.actuatorMinLength+Constants.actuatorMetersPerTick*pos);
+    return angle;
   }
 
-  //TODO @tong returns current speed of flywheel
+  //Returns current speed of flywheel in rpm
   public double getSpeed(){
-    return 0;
+    double topRawSpeed = top.getSelectedSensorVelocity();
+    double bottomRawSpeed = bottom.getSelectedSensorVelocity();
+    double topSpeed = topRawSpeed/Constants.rpmToUnitsPer100ms;
+    double bottomSpeed = bottomRawSpeed/Constants.rpmToUnitsPer100ms;
+    return (topSpeed + bottomSpeed)/2;
   }
 
   // Returns whether the speed and angle are within requirements to shoot
