@@ -29,11 +29,21 @@ public class Shooter extends Subsystem {
     public static final double flywheelkI = 0.000001;
     public static final double flywheelkD = 5;
     public static final double flywheelkF = 1023.0/20660.0; //1023 represents output value to Talon at 100%, 20660 represents Velocity units at 100% output
+    public static final double ticksPerRevolution = 2048.0;
     public static final double flywheelIz = 300;
     public static final double flywheelPeakOut = 1.00;
-    public static final double rpmToUnitsPer100ms = 2048.0/600.0;
-  }
+    public static final double rpmToUnitsPer100ms = ticksPerRevolution/600.0;
 
+    public static final double shooterConstantA = 0.4366;
+    public static final double shooterConstantB = 0.4477;
+    public static final double pistonYOffset = 0.01588;
+    public static final double actuatorMinLength = 0.3334;
+    public static final double actuatorMaxLength = 0.8477;
+    public static final double shooterConstant1 = Math.pow(shooterConstantA, 2) + Math.pow(shooterConstantB, 2) - Math.pow(pistonYOffset, 2); // A^2+B^2-y^2
+    public static final double shooterConstant2 = 2*shooterConstantA*shooterConstantB; // 2AB
+    public static final double actuatorMetersPerRadian = 1;
+    public static final double actuatorMetersPerTick = actuatorMetersPerRadian*2*Math.PI/ticksPerRevolution;
+  }
   private TalonFX top, bottom, actuator;
   private double desiredSpeed, desiredAngle;
 
@@ -92,9 +102,29 @@ public class Shooter extends Subsystem {
     bottom.set(TalonFXControlMode.PercentOutput, 0);
   }
 
+  //converts angle to actuator offset
+  public double angleToActuatorLength(double angle){
+    return Math.sqrt(Constants.shooterConstant1 - Constants.shooterConstant2*Math.cos(angle));
+  }
+
+  //converts actuator offset to angle
+  public double actuatorLengthToAngle(double actuatorOffset){
+    return Math.acos((Constants.shooterConstant1-Math.pow(actuatorOffset, 2))/Constants.shooterConstant2);
+  }
+
+  //TODO @tong sets the position of the actuator
+  public void setActuatorLength(double length){
+    if(length > Constants.actuatorMaxLength) length = Constants.actuatorMaxLength;
+    if(length < Constants.actuatorMinLength) length = Constants.actuatorMinLength;
+    double lengthDifference = length - Constants.actuatorMinLength;
+    double ticks = lengthDifference/Constants.actuatorMetersPerTick;
+    actuator.set(TalonFXControlMode.Position, ticks);
+  }
+
   //TODO @tong sets the shooter to an angle given in radians
   public void setAngle(double angle){
     desiredAngle = angle;
+    setActuatorLength(angleToActuatorLength(angle));
   }
 
   //TODO @tong gets current angle of the shooter
