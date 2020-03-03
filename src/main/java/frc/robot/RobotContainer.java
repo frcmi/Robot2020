@@ -23,6 +23,7 @@ import frc.robot.subsystems.Camera;
 import frc.robot.commands.InterruptAll;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.SetFlywheelSpeed;
+import frc.robot.commands.SetShooterAngle;
 import frc.robot.commands.ToggleLight;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
@@ -52,6 +53,8 @@ public class RobotContainer {
   public JoystickButton toggleLightButton = new JoystickButton(leftJoystick, 3);
   public JoystickButton flywheelOnButton = new JoystickButton(leftJoystick, 1);
   public JoystickButton flywheelOffButton = new JoystickButton(rightJoystick, 1);
+  public JoystickButton aimHighButton = new JoystickButton(rightJoystick, 4);
+  public JoystickButton aimLowButton = new JoystickButton(leftJoystick, 4);
 
   // commands
   private ManualDrive manualDrive;
@@ -129,6 +132,8 @@ public class RobotContainer {
     toggleLightButton.whenPressed(toggleLight);
     flywheelOnButton.whenPressed(new SetFlywheelSpeed(4000));
     flywheelOffButton.whenPressed(new SetFlywheelSpeed(0));
+    aimHighButton.whenPressed(new SetShooterAngle(Math.PI/2));
+    aimLowButton.whenPressed(new SetShooterAngle(0));
   }
 
   /**
