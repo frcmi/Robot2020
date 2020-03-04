@@ -18,9 +18,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Roulette;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Camera;
 import frc.robot.commands.InterruptAll;
+import frc.robot.commands.MaintainRoulettePosition;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.SetFlywheelSpeed;
 import frc.robot.commands.SetShooterAngle;
@@ -43,6 +45,7 @@ public class RobotContainer {
   public final DriveTrain driveTrain = new DriveTrain();
   public final Camera camera = new Camera();
   public final Shooter shooter = new Shooter();
+  public final Roulette roulette = new Roulette();
 
   // Joystick and JoystickButtons
   public final Joystick leftJoystick = new Joystick(0);
@@ -60,6 +63,7 @@ public class RobotContainer {
   private ManualDrive manualDrive;
   private InterruptAll interruptAll;
   private ToggleLight toggleLight;
+  private MaintainRoulettePosition maintainRoulettePosition;
 
   // autonomous chooser
   private SendableChooser<AutoPath> autoPathChooser;
@@ -101,10 +105,11 @@ public class RobotContainer {
     //Initialize commands
     manualDrive = new ManualDrive();
     interruptAll = new InterruptAll(driveTrain, camera, shooter);
+    maintainRoulettePosition = new MaintainRoulettePosition();
 
     // subsystem default commands
     driveTrain.setDefaultCommand(manualDrive);
-    
+    roulette.setDefaultCommand(maintainRoulettePosition);
 
     // leds.setDefaultCommand(ledTest);
 

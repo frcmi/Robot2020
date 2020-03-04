@@ -30,6 +30,7 @@ public class Shooter extends Subsystem {
     public static final double flywheelPeakOut = 1.00;
     public static final double rpmToUnitsPer100ms = ticksPerRevolution/600.0;
 
+    public static final double shooterAngleDifference = -0.0680678;
     public static final double shooterConstantA = 0.4366;
     public static final double shooterConstantB = 0.4477;
     public static final double pistonYOffset = 0.01588;
@@ -133,12 +134,12 @@ public class Shooter extends Subsystem {
 
   //converts angle to actuator length
   public double angleToActuatorLength(double angle){
-    return Math.sqrt(Constants.shooterConstant1 - Constants.shooterConstant2*Math.cos(angle));
+    return Math.sqrt(Constants.shooterConstant1 - Constants.shooterConstant2*Math.cos(angle-Constants.shooterAngleDifference));
   }
 
   //converts actuator length to angle
   public double actuatorLengthToAngle(double actuatorOffset){
-    return Math.acos((Constants.shooterConstant1-Math.pow(actuatorOffset, 2))/Constants.shooterConstant2);
+    return Math.acos((Constants.shooterConstant1-Math.pow(actuatorOffset, 2))/Constants.shooterConstant2)+Constants.shooterAngleDifference;
   }
 
   //Sets actuator length setpoint to given value in meters
