@@ -53,11 +53,12 @@ public class Roulette extends Subsystem {
 
   }
 
-  //TODO @tong do this
+  //Gets raw encoder value
   public double getEncoderValue(){
     return encoder.get();
   }
 
+  //Sets motor percent output
   public void setMotor(double value){
     motor.set(TalonFXControlMode.PercentOutput, value);
   }
@@ -69,7 +70,7 @@ public class Roulette extends Subsystem {
 
   //Gets the desired encoder value for currentPos
   public int getEncoderSetpoint(){
-    return currentPos*Constants.kTicksPerHole;
+    return currentPos*Constants.kTicksPerHole+Constants.kAlignmentOffset;
   }
 
   //Sets the roulette setpoint
