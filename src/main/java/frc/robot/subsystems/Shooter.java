@@ -25,10 +25,6 @@ public class Shooter extends Subsystem {
     public static final double angleThreshold = 5*Math.PI/180;
     public static final double flywheelNeutralDeadband = 0.001;
     public static final int timeoutMs = 30;
-    public static final double flywheelkP = 0.1;
-    public static final double flywheelkI = 0.000001;
-    public static final double flywheelkD = 5;
-    public static final double flywheelkF = 1023.0/20660.0; //1023 represents output value to Talon at 100%, 20660 represents Velocity units at 100% output
     public static final double ticksPerRevolution = 2048.0;
     public static final double flywheelIz = 300;
     public static final double flywheelPeakOut = 1.00;
@@ -44,6 +40,18 @@ public class Shooter extends Subsystem {
     public static final double shooterConstant2 = 2*shooterConstantA*shooterConstantB; // 2AB
     public static final double actuatorMetersPerRadian = 0.00551254848;
     public static final double actuatorMetersPerTick = actuatorMetersPerRadian*2*Math.PI/ticksPerRevolution;
+
+    public static final double flywheelkP = 0.1;
+    public static final double flywheelkI = 0.000001;
+    public static final double flywheelkD = 5;
+    public static final double flywheelkF = 1023.0/20660.0; //1023 represents output value to Talon at 100%, 20660 represents Velocity units at 100% output
+
+    public static final double actuatorkP = 0.1;
+    public static final double actuatorkI = 0.000001;
+    public static final double actuatorkD = 5;
+    public static final double actuatorkF = 10;
+    public static final boolean actuatorSensorPhase = true;
+    public static final boolean actuatorMotorInvert = false;
   }
   private TalonFX top, bottom, actuator;
   private double desiredSpeed, desiredAngle;
@@ -54,19 +62,18 @@ public class Shooter extends Subsystem {
     top = new TalonFX(Constants.topID);
     bottom = new TalonFX(Constants.bottomID);
     actuator = new TalonFX(Constants.actuatorID);
+
+    /* ---- Flywheel Config ---- */
     bottom.setInverted(true);
 
     top.configFactoryDefault();
     bottom.configFactoryDefault();
-    actuator.configFactoryDefault();
 
     top.configNeutralDeadband(Constants.flywheelNeutralDeadband);
     bottom.configNeutralDeadband(Constants.flywheelNeutralDeadband);
-    actuator.configNeutralDeadband(Constants.flywheelNeutralDeadband);
 
     top.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.timeoutMs);
     bottom.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.timeoutMs);
-    actuator.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.timeoutMs);
 
     //Configures peak outputs
     top.configNominalOutputForward(0, Constants.timeoutMs);
@@ -76,11 +83,6 @@ public class Shooter extends Subsystem {
     bottom.configNominalOutputForward(0, Constants.timeoutMs);
     bottom.configNominalOutputReverse(0, Constants.timeoutMs);
     bottom.configClosedLoopPeakOutput(1, Constants.timeoutMs);
-
-    actuator.configNominalOutputForward(0, Constants.timeoutMs);
-    actuator.configNominalOutputReverse(0, Constants.timeoutMs);
-    actuator.configClosedLoopPeakOutput(1, Constants.timeoutMs);
-
 
     //Configures PID constants
     top.config_kF(0, Constants.flywheelkF, Constants.timeoutMs);
@@ -93,13 +95,25 @@ public class Shooter extends Subsystem {
     bottom.config_kI(0, Constants.flywheelkI, Constants.timeoutMs);
     bottom.config_kD(0, Constants.flywheelkD, Constants.timeoutMs);
 
-    actuator.config_kF(0, Constants.flywheelkF, Constants.timeoutMs);
-    actuator.config_kP(0, Constants.flywheelkP, Constants.timeoutMs);
-    actuator.config_kI(0, Constants.flywheelkI, Constants.timeoutMs);
-    actuator.config_kD(0, Constants.flywheelkD, Constants.timeoutMs);
+    /* ----Actuator config---- */
+    actuator.configFactoryDefault();
 
+    actuator.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.timeoutMs);
 
+    actuator.setSensorPhase(Constants.actuatorSensorPhase);
 
+    actuator.setInverted(Constants.actuatorMotorInvert);
+
+    actuator.configNominalOutputForward(0, Constants.timeoutMs);
+    actuator.configNominalOutputReverse(0, Constants.timeoutMs);
+    actuator.configClosedLoopPeakOutput(1, Constants.timeoutMs);
+
+    actuator.configAllowableClosedloopError(0, 0, Constants.timeoutMs);
+
+    actuator.config_kF(0, Constants.actuatorkF, Constants.timeoutMs);
+    actuator.config_kP(0, Constants.actuatorkP, Constants.timeoutMs);
+    actuator.config_kI(0, Constants.actuatorkI, Constants.timeoutMs);
+    actuator.config_kD(0, Constants.actuatorkD, Constants.timeoutMs);
   }
 
   //Sets flywheel to speed given in rpm
@@ -117,12 +131,12 @@ public class Shooter extends Subsystem {
     actuator.set(TalonFXControlMode.PercentOutput, 0);
   }
 
-  //converts angle to actuator offset
+  //converts angle to actuator length
   public double angleToActuatorLength(double angle){
     return Math.sqrt(Constants.shooterConstant1 - Constants.shooterConstant2*Math.cos(angle));
   }
 
-  //converts actuator offset to angle
+  //converts actuator length to angle
   public double actuatorLengthToAngle(double actuatorOffset){
     return Math.acos((Constants.shooterConstant1-Math.pow(actuatorOffset, 2))/Constants.shooterConstant2);
   }
@@ -150,17 +164,23 @@ public class Shooter extends Subsystem {
   }
 
   //Returns current speed of flywheel in rpm
-  public double getSpeed(){
+  public double getTopFlywheelSpeed(){
     double topRawSpeed = top.getSelectedSensorVelocity();
-    double bottomRawSpeed = bottom.getSelectedSensorVelocity();
     double topSpeed = topRawSpeed/Constants.rpmToUnitsPer100ms;
+    return topSpeed;
+  }
+
+  public double getBottomFlywheelSpeed(){
+    double bottomRawSpeed = bottom.getSelectedSensorVelocity();
     double bottomSpeed = bottomRawSpeed/Constants.rpmToUnitsPer100ms;
-    return (topSpeed + bottomSpeed)/2;
+    return bottomSpeed;
   }
 
   // Returns whether the speed and angle are within requirements to shoot
   public boolean isReady(){
-    return Math.abs(getSpeed()-desiredSpeed) <= Constants.speedThreshold && Math.abs(getAngle()-desiredAngle) <= Constants.angleThreshold;
+    return Math.abs(getTopFlywheelSpeed()-desiredSpeed) <= Constants.speedThreshold && 
+            Math.abs(getBottomFlywheelSpeed()-desiredSpeed) <= Constants.speedThreshold && 
+            Math.abs(getAngle()-desiredAngle) <= Constants.angleThreshold;
   }
 
   @Override
