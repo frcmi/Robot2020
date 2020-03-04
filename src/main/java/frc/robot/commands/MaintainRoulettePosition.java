@@ -8,28 +8,44 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.Robot;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Roulette;
 
-public class SetShooterAngle extends Command {
-  private Shooter shooter;
-  private double angle;
+//Moves the roulette to the currently selected hole
+public class MaintainRoulettePosition extends Command {
+  public static class Constants{
+    public static final int errorThreshold = 10;
+    public static final long timeInThresholdToFinishNs = 200000000;
 
-  public SetShooterAngle(double angle) {
-    this.angle = angle;
-    this.shooter = Robot.container.shooter;
+    public static final double kP = 1;
+    public static final double kI = 0.00001;
+    public static final double kD = 5;
+  }
+  private Roulette roulette;
+  private PIDController controller;
+
+  public MaintainRoulettePosition() {
+    roulette = Robot.container.roulette;
+    requires(roulette);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    System.out.println("Setting shooter angle to " + angle);
+
+    controller = new PIDController(Constants.kP, Constants.kI, Constants.kD);
+    controller.enableContinuousInput(0, Roulette.Constants.kTicksPerRevolution-1);
+    controller.setSetpoint(roulette.getEncoderSetpoint());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    shooter.setAngle(angle);
+    if(controller.getSetpoint() != roulette.getEncoderSetpoint()){
+      controller.setSetpoint(roulette.getEncoderSetpoint());
+    }
+    roulette.setMotor(controller.calculate(roulette.getEncoderValue()));
   }
 
   // Make this return true when this Command no longer needs to run execute()
