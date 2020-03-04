@@ -8,17 +8,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Robot;
 import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 
 public class driveToWaypoint extends Command {
   private DriveTrain driveTrain = new DriveTrain();
   private Pose2d pose = new Pose2d();
+
   public driveToWaypoint(Pose2d pose) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    driveTrain = Robot.container.driveTrain;
     this.pose = pose;
-    requires(drivetrain);
+    requires(driveTrain);
   }
 
 
