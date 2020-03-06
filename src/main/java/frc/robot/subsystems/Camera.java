@@ -10,6 +10,11 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.commands.ToggleCamera;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
@@ -27,6 +32,7 @@ public class Camera extends Subsystem {
   private Solenoid light;
   private NetworkTable opsi;
   private boolean networkTableLoadSuccess;
+  private int cameraSelected; //0, 1, or 2; 0 is front, 1 is back, 2 is vision pipeline for debuging
 
   public Camera() {
     super();
@@ -67,5 +73,30 @@ public class Camera extends Subsystem {
     else{
       return null;
     }
+  }
+
+  //Toggles the selected camera output between the front and back
+  public void toggleCamera(){
+    if(networkTableLoadSuccess){
+      opsi.getEntry("camera-selected").setNumber(cameraSelected==0 ? 1 : 0);
+    }
+  }
+
+  //Sets the camera output to debug mode for the vision pipeline
+  public void debugCamera(){
+    if(networkTableLoadSuccess){
+      opsi.getEntry("camera-selected").setNumber(2);
+    }
+  }
+
+  //Adds the camera shuffleboard tab
+  public void addShuffleBoardTab() {
+    ShuffleboardTab cameraTab = Shuffleboard.getTab("Camera");
+
+    // Add test buttons to a layout in the tab
+    ShuffleboardLayout commandsLayout = cameraTab.getLayout("Test", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
+
+    commandsLayout.add("Toggle Camera", new ToggleCamera());
+    commandsLayout.add("Debug Camera", new ToggleCamera(true));
   }
 }

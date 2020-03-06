@@ -111,8 +111,6 @@ public class RobotContainer {
     driveTrain.setDefaultCommand(manualDrive);
     roulette.setDefaultCommand(maintainRoulettePosition);
 
-    // leds.setDefaultCommand(ledTest);
-
     // Configure the button bindings
     configureButtonBindings();
     driveTrain.addShuffleBoardTab();
