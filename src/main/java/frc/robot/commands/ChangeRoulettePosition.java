@@ -35,7 +35,7 @@ public class ChangeRoulettePosition extends Command {
   }
 
   // Called just before this Command runs the first time
-  //test git branch
+  //test git branch the second time
   @Override
   protected void initialize() {
     roulette.setCurrentPos(desiredPosition);
