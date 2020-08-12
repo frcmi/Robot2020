@@ -15,6 +15,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 public class Shooter extends Subsystem {
   private static class Constants {
@@ -56,6 +59,8 @@ public class Shooter extends Subsystem {
   }
   private TalonFX top, bottom, actuator;
   private double desiredSpeed, desiredAngle;
+  private Compressor compressor;
+  private DoubleSolenoid piston;
 
   public Shooter(){
     desiredSpeed = 0;
@@ -63,6 +68,8 @@ public class Shooter extends Subsystem {
     top = new TalonFX(Constants.topID);
     bottom = new TalonFX(Constants.bottomID);
     actuator = new TalonFX(Constants.actuatorID);
+    compressor = new Compressor(0);
+    piston = new DoubleSolenoid(solenoidValues);
 
     /* ---- Flywheel Config ---- */
     bottom.setInverted(true);
@@ -95,6 +102,11 @@ public class Shooter extends Subsystem {
     bottom.config_kP(0, Constants.flywheelkP, Constants.timeoutMs);
     bottom.config_kI(0, Constants.flywheelkI, Constants.timeoutMs);
     bottom.config_kD(0, Constants.flywheelkD, Constants.timeoutMs);
+
+    //Configures the Compressor for pneumatics
+    compressor.setClosedLoopControl(true);
+    compressor.start();
+
 
     /* ----Actuator config---- */
     actuator.configFactoryDefault();
@@ -182,6 +194,17 @@ public class Shooter extends Subsystem {
     return Math.abs(getTopFlywheelSpeed()-desiredSpeed) <= Constants.speedThreshold && 
             Math.abs(getBottomFlywheelSpeed()-desiredSpeed) <= Constants.speedThreshold && 
             Math.abs(getAngle()-desiredAngle) <= Constants.angleThreshold;
+  }
+
+  //moves the piston to boop the ball
+  public void movePiston() {
+    piston.set(kForward);
+
+  }
+
+  //moves the piston in reverse
+  public void movePistonInReverse() {
+    piston.set(kReverse);
   }
 
   @Override
