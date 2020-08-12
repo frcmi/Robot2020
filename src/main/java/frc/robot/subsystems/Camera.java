@@ -74,7 +74,7 @@ public class Camera extends Subsystem {
       return null;
     }
   }
-}
+
 
   //Toggles the selected camera output between the front and back
   public void toggleCamera(){
