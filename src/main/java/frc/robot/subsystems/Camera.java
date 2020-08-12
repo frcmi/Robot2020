@@ -74,9 +74,7 @@ public class Camera extends Subsystem {
       return null;
     }
   }
-<<<<<<< HEAD
 }
-=======
 
   //Toggles the selected camera output between the front and back
   public void toggleCamera(){
@@ -103,4 +101,3 @@ public class Camera extends Subsystem {
     commandsLayout.add("Debug Camera", new ToggleCamera(true));
   }
 }
->>>>>>> 0bfa16d53c2091101004e5a3f8f2c6e654ef2e30
