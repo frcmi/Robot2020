@@ -7,23 +7,23 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.Robot;
 import frc.robot.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 
-public class ManualDrive extends Command {
-  private DriveTrain driveTrain;
-  private Joystick left;
-  private Joystick right;
+public class DriveToWaypoint extends Command {
+  private DriveTrain driveTrain = new DriveTrain();
+  private Pose2d pose = new Pose2d();
 
-  public ManualDrive() {
+  public DriveToWaypoint(Pose2d pose) {
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
     driveTrain = Robot.container.driveTrain;
+    this.pose = pose;
     requires(driveTrain);
-    left = Robot.container.leftJoystick;
-    right = Robot.container.rightJoystick;
   }
+
 
   // Called just before this Command runs the first time
   @Override
@@ -33,8 +33,6 @@ public class ManualDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    //driveTrain.tankDrive(left.getY(), right.getY());
-    driveTrain.arcadeDrive(right.getY(), right.getX());
   }
 
   // Make this return true when this Command no longer needs to run execute()

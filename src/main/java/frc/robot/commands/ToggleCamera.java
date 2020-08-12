@@ -9,25 +9,30 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.DriveTrain;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
+import frc.robot.subsystems.Camera;
 
-public class driveToWaypoint extends Command {
-  private DriveTrain driveTrain = new DriveTrain();
-  private Pose2d pose = new Pose2d();
+public class ToggleCamera extends Command {
+  private Camera camera;
+  private boolean debug;
 
-  public driveToWaypoint(Pose2d pose) {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    driveTrain = Robot.container.driveTrain;
-    this.pose = pose;
-    requires(driveTrain);
+  public ToggleCamera() {
+    camera = Robot.container.camera;
+    debug = false;
   }
 
+  public ToggleCamera(boolean debug){
+    this();
+    this.debug = debug;
+  }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    if(debug){
+      camera.debugCamera();
+    } else{
+      camera.toggleCamera();
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -38,7 +43,7 @@ public class driveToWaypoint extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true
