@@ -27,12 +27,12 @@ public class ToggleIntake extends Command {
     System.out.println("Toggling Intake");
     if(position == false) {
       intake.setMotor(20);
-      intake.setPiston(true,false);
+      //intake.setPiston(true,false);
       position = true;
     }
     else {
       intake.setMotor(20);
-      intake.setPiston(false,true);
+      //intake.setPiston(false,true);
       position = false;
     }
   }

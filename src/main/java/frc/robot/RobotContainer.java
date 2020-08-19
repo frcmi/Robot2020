@@ -29,6 +29,7 @@ import frc.robot.commands.SetFlywheelSpeed;
 import frc.robot.commands.SetShooterAngle;
 import frc.robot.commands.ToggleLight;
 import frc.robot.commands.ToggleIntake;
+import frc.robot.commands.ChangeRoulettePosition;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
