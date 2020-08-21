@@ -196,6 +196,16 @@ public class Shooter extends Subsystem {
             Math.abs(getAngle()-desiredAngle) <= Constants.angleThreshold;
   }
 
+  //turns piston off
+  public void turnPistonOff() {
+    piston.set(kOff);
+  }
+  
+  // gets piston value
+  public DoubleSolenoid.Value getPistonValue() {
+    return piston.get();
+  }
+
   //moves the piston to boop the ball
   public void movePiston() {
     piston.set(kForward);
@@ -206,6 +216,7 @@ public class Shooter extends Subsystem {
   public void movePistonInReverse() {
     piston.set(kReverse);
   }
+
 
   @Override
   public void initDefaultCommand() {
