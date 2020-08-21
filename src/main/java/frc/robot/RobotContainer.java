@@ -18,19 +18,19 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Roulette;
+//import frc.robot.subsystems.Roulette;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.InterruptAll;
-import frc.robot.commands.MaintainRoulettePosition;
+//import frc.robot.commands.MaintainRoulettePosition;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.SetFlywheelSpeed;
 import frc.robot.commands.SetShooterAngle;
 import frc.robot.commands.ToggleLight;
 import frc.robot.commands.ToggleIntake;
 import frc.robot.commands.PistonAction;
-import frc.robot.commands.ChangeRoulettePosition;
+//import frc.robot.commands.ChangeRoulettePosition;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -49,7 +49,7 @@ public class RobotContainer {
   public final DriveTrain driveTrain = new DriveTrain();
   public final Camera camera = new Camera();
   public final Shooter shooter = new Shooter();
-  public final Roulette roulette = new Roulette();
+  //public final Roulette roulette = new Roulette();
   public final Intake intake = new Intake();
 
   // Joystick and JoystickButtons
@@ -91,7 +91,7 @@ public class RobotContainer {
   private InterruptAll interruptAll;
   private ToggleLight toggleLight;
   public ToggleIntake toggleIntake;
-  private MaintainRoulettePosition maintainRoulettePosition;
+  //private MaintainRoulettePosition maintainRoulettePosition;
   private PistonAction pistonAction;
 
   // autonomous chooser
@@ -135,11 +135,11 @@ public class RobotContainer {
     manualDrive = new ManualDrive();
     toggleIntake = new ToggleIntake();
     interruptAll = new InterruptAll(driveTrain, camera, shooter);
-    maintainRoulettePosition = new MaintainRoulettePosition();
+    //maintainRoulettePosition = new MaintainRoulettePosition();
 
     // subsystem default commands
     driveTrain.setDefaultCommand(manualDrive);
-    roulette.setDefaultCommand(maintainRoulettePosition);
+    //roulette.setDefaultCommand(maintainRoulettePosition);
 
     // Configure the button bindings
     configureButtonBindings();
