@@ -90,7 +90,7 @@ public class RobotContainer {
   private ManualDrive manualDrive;
   private InterruptAll interruptAll;
   private ToggleLight toggleLight;
-  private ToggleIntake toggleIntake;
+  public ToggleIntake toggleIntake;
   private MaintainRoulettePosition maintainRoulettePosition;
   private PistonAction pistonAction;
 
@@ -133,6 +133,7 @@ public class RobotContainer {
 
     //Initialize commands
     manualDrive = new ManualDrive();
+    toggleIntake = new ToggleIntake();
     interruptAll = new InterruptAll(driveTrain, camera, shooter);
     maintainRoulettePosition = new MaintainRoulettePosition();
 

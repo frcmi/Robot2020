@@ -37,12 +37,21 @@ public class PistonAction extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+<<<<<<< HEAD:src/main/java/frc/robot/commands/PistonAction.java
 
     if (shooter.getPistonValue() == kForward) {
       return true;
     }
     return false;
 
+=======
+    /*if (shooter.getPistonValue()= kForward) {
+      return true;
+    }
+    return false;
+    */
+    return true;
+>>>>>>> 3c3b6553be0b3f9b2f2320948ee5d6ecbb7f673f:src/main/java/frc/robot/commands/MovePiston.java
   }
 
 
@@ -50,7 +59,7 @@ public class PistonAction extends Command {
   @Override
   protected void end() {
     shooter.movePistonInReverse();
-    shooter.turnPistonOff();
+    //shooter.turnPistonOff();
   }
 
   // Called when another command which requires one or more of the same

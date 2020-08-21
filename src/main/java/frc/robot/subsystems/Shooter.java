@@ -69,7 +69,11 @@ public class Shooter extends Subsystem {
     bottom = new TalonFX(Constants.bottomID);
     actuator = new TalonFX(Constants.actuatorID);
     compressor = new Compressor(0);
+<<<<<<< HEAD
     piston = new DoubleSolenoid(3, 4);
+=======
+    //piston = new DoubleSolenoid(solenoidValues);
+>>>>>>> 3c3b6553be0b3f9b2f2320948ee5d6ecbb7f673f
 
     /* ---- Flywheel Config ---- */
     bottom.setInverted(true);
