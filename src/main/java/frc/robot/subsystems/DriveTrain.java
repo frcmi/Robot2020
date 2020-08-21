@@ -77,7 +77,7 @@ public class DriveTrain extends Subsystem {
     right = new SpeedControllerGroup(rightMotors[0], rightMotors[1], rightMotors[2]);
 
     left.setInverted(Constants.kLeftMotorReversed);
-    right.setInverted(Constants.kRightMotorReversed);
+    //right.setInverted(Constants.kRightMotorReversed);
 
     diffDrive = new DifferentialDrive(right, left);
 
