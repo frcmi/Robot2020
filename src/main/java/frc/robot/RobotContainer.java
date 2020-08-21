@@ -29,6 +29,7 @@ import frc.robot.commands.SetFlywheelSpeed;
 import frc.robot.commands.SetShooterAngle;
 import frc.robot.commands.ToggleLight;
 import frc.robot.commands.ToggleIntake;
+import frc.robot.commands.PistonAction;
 import frc.robot.commands.ChangeRoulettePosition;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
@@ -52,6 +53,7 @@ public class RobotContainer {
   public final Intake intake = new Intake();
 
   // Joystick and JoystickButtons
+  /**
   public final Joystick leftJoystick = new Joystick(0);
   public final Joystick rightJoystick = new Joystick(1);
 
@@ -62,6 +64,27 @@ public class RobotContainer {
   public JoystickButton flywheelOffButton = new JoystickButton(rightJoystick, 1);
   public JoystickButton aimHighButton = new JoystickButton(rightJoystick, 4);
   public JoystickButton aimLowButton = new JoystickButton(leftJoystick, 4);
+  */
+  public final XboxController controller = new XboxController(1);
+
+  public JoystickButton xButton = new JoystickButton(controller, 3);
+	public JoystickButton yButton = new JoystickButton(controller, 4);
+	public JoystickButton aButton = new JoystickButton(controller, 1);
+	public JoystickButton bButton = new JoystickButton(controller, 2);
+	public JoystickButton rightBumper = new JoystickButton(controller, 6);
+  public JoystickButton leftBumper = new JoystickButton(controller, 5);
+  public JoystickButton startButton = new JoystickButton(controller, 8);
+	public JoystickButton selectButton = new JoystickButton(controller, 7);
+	public JoystickButton leftStickButton = new JoystickButton(controller, 9);
+	public JoystickButton rightStickButton = new JoystickButton(controller, 10);
+  
+  public JoystickButton interruptAllButton = xButton;
+  public JoystickButton toggleLightButton = yButton;
+  public JoystickButton flywheelOnButton = aButton;
+  public JoystickButton flywheelOffButton = bButton;
+  public JoystickButton aimHighButton = rightBumper;
+  public JoystickButton aimLowButton = leftBumper;
+  public JoystickButton toggleIntakeButton = startButton;
 
   // commands
   private ManualDrive manualDrive;
@@ -69,6 +92,7 @@ public class RobotContainer {
   private ToggleLight toggleLight;
   private ToggleIntake toggleIntake;
   private MaintainRoulettePosition maintainRoulettePosition;
+  private PistonAction pistonAction;
 
   // autonomous chooser
   private SendableChooser<AutoPath> autoPathChooser;
@@ -142,6 +166,7 @@ public class RobotContainer {
     flywheelOffButton.whenPressed(new SetFlywheelSpeed(0));
     aimHighButton.whenPressed(new SetShooterAngle(Math.PI/2));
     aimLowButton.whenPressed(new SetShooterAngle(0));
+    toggleIntakeButton.whenPressed(toggleIntake);
   }
 
   /**

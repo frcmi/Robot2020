@@ -8,6 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.Robot;
@@ -17,12 +18,15 @@ public class ManualDrive extends Command {
   private DriveTrain driveTrain;
   private Joystick left;
   private Joystick right;
+  private XboxController controller;
 
   public ManualDrive() {
     driveTrain = Robot.container.driveTrain;
     requires(driveTrain);
+    /**
     left = Robot.container.leftJoystick;
     right = Robot.container.rightJoystick;
+    */
   }
 
   // Called just before this Command runs the first time
@@ -34,7 +38,8 @@ public class ManualDrive extends Command {
   @Override
   protected void execute() {
     //driveTrain.tankDrive(left.getY(), right.getY());
-    driveTrain.arcadeDrive(right.getY(), right.getX());
+    //driveTrain.arcadeDrive(right.getY(), right.getX());
+    driveTrain.arcadeDrive(controller.getRawAxis(1), -controller.getRawAxis(5));
   }
 
   // Make this return true when this Command no longer needs to run execute()
