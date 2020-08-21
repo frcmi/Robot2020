@@ -36,17 +36,19 @@ public class MovePiston extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (shooter.getPistonValue()= kForward) {
+    /*if (shooter.getPistonValue()= kForward) {
       return true;
     }
     return false;
+    */
+    return true;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
     shooter.movePistonInReverse();
-    shooter.turnPistonOff();
+    //shooter.turnPistonOff();
   }
 
   // Called when another command which requires one or more of the same

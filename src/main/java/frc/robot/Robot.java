@@ -24,6 +24,7 @@ import frc.robot.subsystems.*;
 public class Robot extends TimedRobot {
     public static PrintStream debugStream;
     public static RobotContainer container;
+    public static ToggleIntake toggleIntake;
     
     /**
      * This function is run when the robot is first started up and should be used
@@ -94,5 +95,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
+       // container.toggleIntake;
     }
 }
