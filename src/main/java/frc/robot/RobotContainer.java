@@ -90,13 +90,8 @@ public class RobotContainer {
   private ManualDrive manualDrive;
   private InterruptAll interruptAll;
   private ToggleLight toggleLight;
-<<<<<<< HEAD
   public ToggleIntake toggleIntake;
   //private MaintainRoulettePosition maintainRoulettePosition;
-=======
-  private ToggleIntake toggleIntake;
-  private MaintainRoulettePosition maintainRoulettePosition;
->>>>>>> fddb0d18a00e52150df56c73ab9bf228c8a78d50
   private PistonAction pistonAction;
 
   // autonomous chooser
