@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.controller.PIDController;
  */
 public class Roulette extends Subsystem {
   public static class Constants{
-    public static final int[] kEncoderPorts = {0, 1};
+    public static final int[] kEncoderPorts = {2, 3};
     public static final boolean kEncoderReversed = false;
 
     public static final int motorID = 10;
@@ -38,7 +38,7 @@ public class Roulette extends Subsystem {
   public Roulette(){
     motor = new TalonFX(Constants.motorID);
 
-    encoder = new Encoder(Constants.kEncoderPorts[0], Constants.kEncoderPorts[1], Constants.kEncoderReversed);
+    encoder = new Encoder(Constants.kEncoderPorts[2], Constants.kEncoderPorts[3], Constants.kEncoderReversed);
 
     int encoderPos = encoder.get();
 
