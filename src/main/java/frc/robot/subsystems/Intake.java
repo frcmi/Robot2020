@@ -30,8 +30,8 @@ public class Intake extends Subsystem {
 
   //needs port numbers
   public Intake() {
-    motor = new TalonFX(00);
-    //piston = new DoubleSolenoid(portnumbers);
+    motor = new TalonFX(0);
+    piston = new DoubleSolenoid(0,1);
   }
   
   //sets motor percent output
@@ -39,7 +39,7 @@ public class Intake extends Subsystem {
     motor.set(TalonFXControlMode.PercentOutput, value);
   }
 
-  /** 
+ 
   //sets piston position
   public void setPiston(Boolean firstVal, Boolean secondVal) {
     if(firstVal) {
@@ -49,7 +49,7 @@ public class Intake extends Subsystem {
       piston.set(Value.kReverse);
     }
   }
-  */
+
 
   @Override
   public void initDefaultCommand() {
